@@ -1,0 +1,54 @@
+name: Deploy
+
+# Cloudflare Pages is the primary/canonical site (foia-results.pages.dev).
+# GitHub Pages is a matched mirror. Both publish on every push to main.
+# The Cloudflare job needs one repo secret: CLOUDFLARE_API_TOKEN (Cloudflare Pages:Edit).
+# The GitHub Pages job uses the built-in token — no secret needed.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  cloudflare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stage tracked files only
+        run: mkdir -p /tmp/site && git archive HEAD | tar -x -C /tmp/site
+      - name: Ensure Pages project exists
+        uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 4ff969ce831c43ea0c37553883217353
+          command: pages project create foia-results --production-branch main
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 4ff969ce831c43ea0c37553883217353
+          command: pages deploy /tmp/site --project-name=foia-results --branch=main --commit-dirty=true
+
+  github-pages:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stage tracked files only
+        run: mkdir -p /tmp/site && git archive HEAD | tar -x -C /tmp/site
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: /tmp/site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

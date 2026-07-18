@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FOIA Results</title>
+<meta name="description" content="Results from the FOIA Around, Find Out public-records dockets, as plain headlines. What came back, what it means, and what's due next.">
+<style>
+  :root{
+    --bg:#0b0b0c; --panel:#141417; --paper:#101217; --line:#2a2b31;
+    --ink:#f0f2f6; --ink2:#c2c8d2; --faint:#8b909c;
+    /* the only colors on the page — each means one thing */
+    --norec:#f57a5c;   /* No Records — a doc that should exist doesn't (lighter orange-red alarm) */
+    --rec:#5ec46e;     /* Records Released — documents actually in hand (the clean win) */
+    --block:#cd5044;   /* Denied / Invoiced — stonewalled (deeper red) */
+    --mono:"SFMono-Regular",ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.58;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:inherit}
+  .wrap{max-width:830px;margin:0 auto;padding:0 22px}
+
+  header{padding:56px 0 0}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+  h1{margin:.32em 0 .12em;font-size:32px;font-weight:800;letter-spacing:-.02em}
+  .tagline{color:var(--ink2);font-size:16px;max-width:58ch;margin:8px 0 0}
+  .rule{height:1px;background:var(--line);margin:22px 0 0}
+
+  main{padding:4px 0 72px}
+
+  .note{border-left:2px solid var(--norec);padding:9px 0 9px 15px;margin:26px 0 6px;font-size:15.5px;color:var(--ink2)}
+  .note b{color:var(--ink);font-weight:700}
+  .note .em{color:var(--norec);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+
+  h2.sec{font-size:12px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:42px 0 12px;display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+  .legend{display:flex;gap:15px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--faint)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+  /* results — each is text + a clip of the actual reply */
+  .item{display:grid;grid-template-columns:1fr 224px;gap:0 24px;align-items:start;border-left:2px solid var(--line);padding:3px 0 24px 18px;margin:22px 0 0}
+  .item .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700}
+  .item .thread{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);margin-left:9px}
+  .item .hl{font-size:20px;line-height:1.25;font-weight:600;margin:8px 0 6px;letter-spacing:-.01em;color:var(--ink)}
+  .item .mean{color:var(--ink2);font-size:15px;line-height:1.55;margin:0 0 11px}
+  .item .foot{font-family:var(--mono);font-size:11.5px;color:var(--faint);display:flex;gap:6px 15px;flex-wrap:wrap;align-items:baseline}
+  .item .foot .next{color:var(--ink2)}
+  .item .foot a{color:var(--faint);text-decoration:none;border-bottom:1px dotted currentColor}
+  .item .foot a:hover{color:var(--ink)}
+  .item.no-records{border-left-color:var(--norec)} .item.no-records .tag{color:var(--norec)}
+  .item.records{border-left-color:var(--rec)} .item.records .tag{color:var(--rec)}
+  .item.denied,.item.invoiced{border-left-color:var(--block)} .item.denied .tag,.item.invoiced .tag{color:var(--block)}
+
+  /* the reply clip — a scrap of the actual document */
+  .clip{background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:12px 13px 11px}
+  .item.no-records .clip{border-color:var(--norec)}
+  .item.records .clip{border-color:var(--rec)}
+  .item.denied .clip,.item.invoiced .clip{border-color:var(--block)}
+  .clip .ag{font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);line-height:1.35;margin-bottom:8px}
+  .clip .hr{height:1px;background:var(--line);margin:0 0 9px}
+  .clip .q{font-family:var(--serif);font-size:14.5px;line-height:1.45;color:var(--ink);font-style:italic}
+  .clip.money .q{font-style:normal;font-size:15px}
+  .clip.money .q b{font-size:20px;font-weight:700;display:block;margin-top:2px;letter-spacing:-.01em}
+  .clip .id{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:10px}
+
+  /* on the clock */
+  .pending{margin:12px 0 0}
+  .prow{display:grid;grid-template-columns:74px 1fr 200px;gap:0 18px;align-items:center;padding:13px 0;border-top:1px solid var(--line);font-size:13.5px}
+  .clock{font-family:var(--mono);font-weight:700;font-size:16px;line-height:1.05;color:var(--ink2)}
+  .clock small{display:block;font-size:9px;font-weight:400;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+  .clock.soon{color:var(--block)}
+  .clock.over{color:var(--norec)}
+  .clock.tbd{font-size:11px;font-weight:400;color:var(--faint)}
+  .pwhat{color:var(--ink)} .pwhat .pag{display:block;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:2px}
+  .pstat{font-family:var(--mono);font-size:11px;color:var(--ink2);text-align:right}
+
+  @media (max-width:620px){
+    .item{grid-template-columns:1fr;gap:14px 0}
+    .clip{max-width:340px}
+    .prow{grid-template-columns:64px 1fr;gap:4px 12px}
+    .pstat{grid-column:2;text-align:left}
+  }
+  footer{border-top:1px solid var(--line);margin-top:44px;padding:16px 0 48px;color:var(--faint);font-size:12.5px}
+  footer a{color:var(--ink2)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="kicker">FAFO · public records</div>
+    <h1>FOIA Results</h1>
+    <div class="rule"></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="note"><b>“No Records”</b> replies confirm that a document which <span class="em">should</span> exist <span class="em">doesn’t</span>.</div>
+
+  <h2 class="sec"><span>Results</span><span class="legend">
+    <span><i style="background:var(--norec)"></i>no records</span>
+    <span><i style="background:var(--rec)"></i>records released</span>
+    <span><i style="background:var(--block)"></i>stonewalled</span>
+  </span></h2>
+  <div id="results"></div>
+
+  <h2 class="sec"><span>On the clock</span><span id="pendLede"></span></h2>
+  <div class="pending" id="pending"></div>
+
+</main>
+
+<footer><div class="wrap" id="footer"></div></footer>
+
+<script>
+// ——— curated results feed (edit as answers land) ———
+// kind: "no-records" | "records" | "denied" | "invoiced"
+// clip = a verbatim scrap of the actual reply: {ag, q, id, money?}
+const RESULTS = [
+  { kind:"no-records", thread:"National Design Studio",
+    hl:"The National Design Studio has filed no records schedule with the National Archives.",
+    mean:"Every federal body must file one so its records can’t quietly vanish. NDS operates without one — now confirmed in writing (NGC26-543).",
+    src:"National Archives", date:"2026-07-09", next:"90-day appeal window open.",
+    docket:"https://foia-around-find-out.pages.dev/#card-passports-eop",
+    clip:{ ag:"National Archives · Operational FOIA Division", q:"Following a search, no records were found to be responsive.", id:"Jul 9, 2026 · NGC26-543" } },
+  { kind:"no-records", thread:"National Design Studio",
+    hl:"No agreement exists between the Election Assistance Commission and NDS over vote.gov.",
+    mean:"The EAC publicly admitted redesign talks with the design studio happened — yet holds no contract, MOU, or task order for it. The gap between “talks happened” and “no paper” is the story.",
+    src:"Election Assistance Commission", date:"2026-07-09", next:"Chase the EAC email/calendar or the White House side.",
+    docket:"https://foia-around-find-out.pages.dev/#card-vote-gov-preview",
+    clip:{ ag:"U.S. Election Assistance Commission", q:"The EAC does not possess records responsive to your request.", id:"Jul 9, 2026 · EAC 26-0064" } },
+  { kind:"no-records", thread:"National Design Studio",
+    hl:"OMB holds no privacy assessment for any National Design Studio system.",
+    mean:"NDS was created inside the White House Office itself (Executive Order 14338, Aug 2025), so OMB says its records aren’t even in its custody — a privacy-review black hole by design.",
+    src:"Office of Management and Budget", date:"2026-07-16", next:"Points the next request at the White House / Presidential Records Act.",
+    docket:"https://foia-around-find-out.pages.dev/#card-no-pias-sorns",
+    clip:{ ag:"Office of Management and Budget", q:"NDS records are not within the legal custody or control of OMB.", id:"Jul 16, 2026" } },
+  { kind:"no-records", thread:"National Design Studio",
+    hl:"No one authorized a White House design-studio staffer to be the security contact on a federal agency’s website.",
+    mean:"An @ndstudio.gov address sat as the security contact on the U.S. African Development Foundation’s own domain — with zero written authorization behind it.",
+    src:"U.S. African Development Foundation", date:"2026-07-13", next:"Clean confirmed absence — no follow-up needed.",
+    docket:"https://foia-around-find-out.pages.dev/#card-akash-usadf",
+    clip:{ ag:"U.S. African Development Foundation", q:"There are no documents responsive to your request.", id:"Jul 13, 2026 · no charge" } },
+  { kind:"no-records", thread:"Conflict of interest",
+    hl:"No financial-disclosure or ethics record for Joe Gebbia exists at the Office of Government Ethics.",
+    mean:"The design-studio figurehead has no certified disclosure on file at the federal ethics office. Such reports also sit outside FOIA entirely — a second layer of opacity.",
+    src:"Office of Government Ethics", date:"2026-07-07", next:"OGE Form 201 to Gebbia’s home-agency ethics office.",
+    docket:"https://foia-around-find-out.pages.dev/#card-gebbia-coi",
+    clip:{ ag:"U.S. Office of Government Ethics", q:"No responsive records were located.", id:"Jul 7, 2026 · OGE FY26/080" } },
+  { kind:"invoiced", thread:"Motive without a witness",
+    hl:"Utah’s Governor wants $615 before it will release the memos behind Gov. Cox’s motive claims.",
+    mean:"Fee waiver and fast-track both denied. Nine “staff hours” at $60 plus a $75 out-of-state surcharge — the price to see who briefed the Governor before he named a homicide suspect’s motive to the country.",
+    src:"Office of the Governor of Utah", date:"2026-07-17", next:"Fee-waiver override filed — awaiting decision. Not paying.",
+    docket:"https://fafo-utah-kirk.pages.dev/#card-motive-testimony",
+    clip:{ ag:"Office of the Governor of Utah · Invoice GO-071726-0088", q:"9.0 hrs staff time + $75 out-of-state fee.<b>Total: $615.00</b>", id:"Jul 17, 2026 · due Aug 3", money:true } },
+  { kind:"invoiced", thread:"Scene paved over",
+    hl:"Utah’s Governor wants $351 before it will release records on the paving-over of the crime scene.",
+    mean:"Same denial. The lead detective testified he never authorized paving the homicide scene mid-investigation; a contractor points at the Governor’s office — and the office wants prepayment to say whether records exist.",
+    src:"Office of the Governor of Utah", date:"2026-07-17", next:"Override filed — awaiting decision.",
+    docket:"https://fafo-utah-kirk.pages.dev/#card-paved-scene",
+    clip:{ ag:"Office of the Governor of Utah · Invoice GO-071726-0087", q:"4.6 hrs staff time + $75 out-of-state fee.<b>Total: $351.00</b>", id:"Jul 17, 2026 · due Aug 3", money:true } },
+  { kind:"denied", thread:"UVU camera evidence",
+    hl:"Utah Valley University refused to fast-track all three requests for the hearing’s camera evidence.",
+    mean:"The source of the “4K” roof exhibit, the edited courtroom clips, and the scene-access roster — expedite denied on each, on the same “no public benefit” finding. The requests still stand; answers are legally due.",
+    src:"UVU Police Department", date:"2026-07-17", next:"Substantive responses due ~Aug 1.",
+    docket:"https://fafo-utah-kirk.pages.dev/#card-exhibit-121",
+    clip:{ ag:"Utah Valley University · records office", q:"The request failed to meet that burden of demonstrating a public benefit.", id:"Jul 17, 2026 · #26-229/230/231" } }
+];
+
+// ——— pending countdown ———
+const PENDING = [
+  { what:"The “4K” exhibit source, edited courtroom clips, scene-access roster", ag:"UVU Police Dept · #26-229/230/231", due:"2026-08-01", stat:"Expedite denied · 10-day clock" },
+  { what:"The $615 motive-briefing memos", ag:"Utah Governor’s Office · 260716AB2", due:null, stat:"Override filed · awaiting CAO" },
+  { what:"The $351 paved-scene records", ag:"Utah Governor’s Office · 260716AB1", due:null, stat:"Override filed · awaiting CAO" },
+  { what:"The Nest-doorbell homeowner interview report", ag:"FBI · eFOIPA", due:null, stat:"Filed Jul 16 · number pending" },
+  { what:"DFC investment commitments (Honduras / Próspera-adjacent)", ag:"U.S. Int’l Development Finance Corp · 26-039", due:null, stat:"Perfected · awaiting response" }
+];
+
+const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const TAG = { "no-records":"No records", "records":"Records released", "denied":"Denied", "invoiced":"Invoiced" };
+const MONTH = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmt = iso => { const [y,m,d]=iso.split("-").map(Number); return MONTH[m-1]+" "+d+", "+y; };
+// clip quote may contain a <b> total; escape around it deliberately
+const clipQuote = q => esc(q).replace("&lt;b&gt;","<b>").replace("&lt;/b&gt;","</b>");
+
+document.getElementById("results").innerHTML = RESULTS.map(s => {
+  const c = s.clip || {};
+  const clip = `<div class="clip${c.money?" money":""}">`+
+    `<div class="ag">${esc(c.ag||s.src)}</div><div class="hr"></div>`+
+    `<div class="q">${clipQuote(c.q||"")}</div>`+
+    (c.id?`<div class="id">${esc(c.id)}</div>`:"")+`</div>`;
+  return `<div class="item ${s.kind}">`+
+    `<div class="body">`+
+      `<span class="tag">${TAG[s.kind]}</span><span class="thread">${esc(s.thread)}</span>`+
+      `<div class="hl">${esc(s.hl)}</div>`+
+      `<div class="foot"><span>${esc(s.src)}</span><span>${fmt(s.date)}</span>`+
+      (s.next?`<span class="next">Next: ${esc(s.next)}</span>`:"")+
+      `<a href="${esc(s.docket)}" target="_blank" rel="noopener">the request ↗</a></div>`+
+    `</div>`+ clip +
+  `</div>`;
+}).join("");
+
+function daysLeft(due){
+  if(!due) return null;
+  const now=new Date(); now.setHours(0,0,0,0);
+  const [y,m,d]=due.split("-").map(Number);
+  return Math.round((new Date(y,m-1,d)-now)/86400000);
+}
+function clockCell(due){
+  const n=daysLeft(due);
+  if(n===null) return `<div class="clock tbd">no fixed clock</div>`;
+  if(n<0) return `<div class="clock over">${-n}d<small>overdue</small></div>`;
+  return `<div class="clock${n<=3?" soon":""}">${n}d<small>${n===0?"due today":"left"}</small></div>`;
+}
+const prows = PENDING.slice().sort((a,b)=>{
+  const na=daysLeft(a.due), nb=daysLeft(b.due);
+  if(na===null&&nb===null) return 0; if(na===null) return 1; if(nb===null) return -1; return na-nb;
+});
+document.getElementById("pending").innerHTML = prows.map(p=>
+  `<div class="prow">${clockCell(p.due)}`+
+  `<div class="pwhat">${esc(p.what)}<span class="pag">${esc(p.ag)}</span></div>`+
+  `<div class="pstat">${esc(p.stat)}</div></div>`).join("");
+document.getElementById("pendLede").textContent = PENDING.length + " in flight · " + PENDING.filter(p=>p.due).length + " on a legal clock";
+
+document.getElementById("footer").innerHTML =
+  "Results feed for the <a href=\"https://foia-around-find-out.pages.dev/\" target=\"_blank\" rel=\"noopener\">federal</a> and <a href=\"https://fafo-utah-kirk.pages.dev/\" target=\"_blank\" rel=\"noopener\">Charlie Kirk</a> public-records dockets, where anyone can file these requests. Headlines updated by hand as answers arrive. Client-side only, no tracking. CC0.";
+</script>
+</body>
+</html>
