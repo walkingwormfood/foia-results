@@ -123,19 +123,19 @@ const RESULTS = [
     mean:"Every federal body must file one so its records can’t quietly vanish. NDS operates without one — now confirmed in writing (NGC26-543).",
     src:"National Archives", date:"2026-07-09", next:"90-day appeal window open.",
     docket:"https://foia-around-find-out.pages.dev/#card-passports-eop",
-    clip:{ ag:"National Archives · Operational FOIA Division", q:"Following a search, no records were found to be responsive.", id:"Jul 9, 2026 · NGC26-543" } },
+    clip:{ ag:"National Archives and Records Administration", q:"Following a search, no records were found to be responsive.", id:"Jul 9, 2026 · NGC26-543" } },
   { kind:"no-records", thread:"National Design Studio",
     hl:"No agreement exists between the Election Assistance Commission and NDS over vote.gov.",
     mean:"The EAC publicly admitted redesign talks with the design studio happened — yet holds no contract, MOU, or task order for it. The gap between “talks happened” and “no paper” is the story.",
-    src:"Election Assistance Commission", date:"2026-07-09", next:"Chase the EAC email/calendar or the White House side.",
+    src:"Election Assistance Commission", date:"2026-07-09", next:"90-day appeal window open.",
     docket:"https://foia-around-find-out.pages.dev/#card-vote-gov-preview",
     clip:{ ag:"U.S. Election Assistance Commission", q:"The EAC does not possess records responsive to your request.", id:"Jul 9, 2026 · EAC 26-0064" } },
-  { kind:"no-records", thread:"National Design Studio",
-    hl:"OMB holds no privacy assessment for any National Design Studio system.",
-    mean:"NDS was created inside the White House Office itself (Executive Order 14338, Aug 2025), so OMB says its records aren’t even in its custody — a privacy-review black hole by design.",
-    src:"Office of Management and Budget", date:"2026-07-16", next:"Points the next request at the White House / Presidential Records Act.",
+  { kind:"denied", thread:"National Design Studio",
+    hl:"OMB won’t process requests about NDS — the studio sits inside the White House Office, where FOIA can’t reach.",
+    mean:"NDS was created inside the White House Office itself (Executive Order 14338, Aug 2025). OMB’s written answer puts the shield on paper: NDS records aren’t in its custody and it won’t process FOIA for the studio. But § 208 privacy assessments are submitted TO OMB — the re-aimed request at OMB’s own files is one the custody argument can’t deflect.",
+    src:"Office of Management and Budget", date:"2026-07-16", next:"Re-aim at OMB’s own files logged as OMB FOIA 2026-745.",
     docket:"https://foia-around-find-out.pages.dev/#card-no-pias-sorns",
-    clip:{ ag:"Office of Management and Budget", q:"NDS records are not within the legal custody or control of OMB.", id:"Jul 16, 2026" } },
+    clip:{ ag:"Office of Management and Budget", q:"OMB does not process FOIA requests on behalf of NDS.", id:"Jul 16, 2026 · custody deflection" } },
   { kind:"no-records", thread:"National Design Studio",
     hl:"No one authorized a White House design-studio staffer to be the security contact on a federal agency’s website.",
     mean:"An @ndstudio.gov address sat as the security contact on the U.S. African Development Foundation’s own domain — with zero written authorization behind it.",
@@ -145,9 +145,9 @@ const RESULTS = [
   { kind:"no-records", thread:"Conflict of interest",
     hl:"No financial-disclosure or ethics record for Joe Gebbia exists at the Office of Government Ethics.",
     mean:"The design-studio figurehead has no certified disclosure on file at the federal ethics office. Such reports also sit outside FOIA entirely — a second layer of opacity.",
-    src:"Office of Government Ethics", date:"2026-07-07", next:"OGE Form 201 to Gebbia’s home-agency ethics office.",
+    src:"Office of Government Ethics", date:"2026-07-07", next:"OGE Form 201 to the White House Office ethics official — a § 13107 route FOIA shields can’t block.",
     docket:"https://foia-around-find-out.pages.dev/#card-gebbia-coi",
-    clip:{ ag:"U.S. Office of Government Ethics", q:"No responsive records were located.", id:"Jul 7, 2026 · OGE FY26/080" } },
+    clip:{ ag:"U.S. Office of Government Ethics", q:"OGE searched and located no responsive records — and 278e reports aren’t processed under FOIA at all.", id:"Jul 7, 2026 · OGE FOIA FY 26/080" } },
   { kind:"invoiced", thread:"Motive without a witness",
     hl:"Utah’s Governor wants $615 before it will release the memos behind Gov. Cox’s motive claims.",
     mean:"Fee waiver and fast-track both denied. Nine “staff hours” at $60 plus a $75 out-of-state surcharge — the price to see who briefed the Governor before he named a homicide suspect’s motive to the country.",
@@ -160,21 +160,28 @@ const RESULTS = [
     src:"Office of the Governor of Utah", date:"2026-07-17", next:"Override filed — awaiting decision.",
     docket:"https://fafo-utah-kirk.pages.dev/#card-paved-scene",
     clip:{ ag:"Office of the Governor of Utah · Invoice GO-071726-0087", q:"4.6 hrs staff time + $75 out-of-state fee.<b>Total: $351.00</b>", id:"Jul 17, 2026 · due Aug 3", money:true } },
-  { kind:"denied", thread:"UVU camera evidence",
-    hl:"Utah Valley University refused to fast-track all three requests for the hearing’s camera evidence.",
-    mean:"The source of the “4K” roof exhibit, the edited courtroom clips, and the scene-access roster — expedite denied on each, on the same “no public benefit” finding. The requests still stand; answers are legally due.",
+  { kind:"denied", thread:"UVU hearing evidence",
+    hl:"Utah Valley University refused to fast-track all three requests for the hearing evidence.",
+    mean:"The source of the “4K” roof exhibit, the cut courtroom clips, and the scene access log with the agency roster — expedite denied on each, on the same public-benefit finding (§ 63G-2-204(4)(a)). The requests still stand; answers are legally due.",
     src:"UVU Police Department", date:"2026-07-17", next:"Substantive responses due ~Aug 1.",
     docket:"https://fafo-utah-kirk.pages.dev/#card-exhibit-121",
-    clip:{ ag:"Utah Valley University · records office", q:"The request failed to meet that burden of demonstrating a public benefit.", id:"Jul 17, 2026 · #26-229/230/231" } }
+    clip:{ ag:"Utah Valley University · records office", q:"The request “failed to meet that burden” of demonstrating a public benefit.", id:"Jul 17, 2026 · #26-229/230/231" } }
 ];
 
 // ——— pending countdown ———
 const PENDING = [
-  { what:"The “4K” exhibit source, edited courtroom clips, scene-access roster", ag:"UVU Police Dept · #26-229/230/231", due:"2026-08-01", stat:"Expedite denied · 10-day clock" },
+  { what:"The “4K” exhibit source, cut courtroom clips, scene access log + agency roster", ag:"UVU Police Dept · #26-229/230/231", due:"2026-08-01", stat:"Expedite denied · 10-day clock" },
+  { what:"Courtyard paving work orders & authorizations", ag:"UVU · #26-212", due:"2026-07-28", stat:"Filed Jul 13 · Pioneer Day stretch" },
+  { what:"Bodycam rolling during the rifle recovery + evidence record", ag:"Utah County SO · #26-2791", due:"2026-07-28", stat:"Filed Jul 12" },
+  { what:"Parking-garage access-control log, morning of Sept 10", ag:"UVU · #26-220", due:"2026-07-31", stat:"Filed Jul 16" },
+  { what:"TPUSA event coordination, credentialing & vendor roster", ag:"UVU · #26-221", due:"2026-07-31", stat:"Filed Jul 16" },
   { what:"The $615 motive-briefing memos", ag:"Utah Governor’s Office · 260716AB2", due:null, stat:"Override filed · awaiting CAO" },
   { what:"The $351 paved-scene records", ag:"Utah Governor’s Office · 260716AB1", due:null, stat:"Override filed · awaiting CAO" },
   { what:"The Nest-doorbell homeowner interview report", ag:"FBI · eFOIPA", due:null, stat:"Filed Jul 16 · number pending" },
-  { what:"DFC investment commitments (Honduras / Próspera-adjacent)", ag:"U.S. Int’l Development Finance Corp · 26-039", due:null, stat:"Perfected · awaiting response" }
+  { what:"DFC investment commitments (Honduras / Próspera-adjacent)", ag:"U.S. Int’l Development Finance Corp · 26-039", due:null, stat:"Perfected round two · complex queue" },
+  { what:"PostHog analytics contracts on federal sites", ag:"OMB · no ack yet", due:"2026-08-03", stat:"Determination due" },
+  { what:"Authorization for NDS “AutoMonitor” tracking scripts", ag:"OMB · no ack yet", due:"2026-08-03", stat:"Determination due" },
+  { what:"PIAs/SORNs in OMB’s own files — the custody-proof re-aim", ag:"OMB · FOIA 2026-745", due:null, stat:"Logged Jul 16" }
 ];
 
 const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -221,7 +228,7 @@ document.getElementById("pending").innerHTML = prows.map(p=>
   `<div class="prow">${clockCell(p.due)}`+
   `<div class="pwhat">${esc(p.what)}<span class="pag">${esc(p.ag)}</span></div>`+
   `<div class="pstat">${esc(p.stat)}</div></div>`).join("");
-document.getElementById("pendLede").textContent = PENDING.length + " in flight · " + PENDING.filter(p=>p.due).length + " on a legal clock";
+document.getElementById("pendLede").textContent = PENDING.length + " listed · " + PENDING.filter(p=>p.due).length + " on a legal clock";
 
 document.getElementById("footer").innerHTML =
   "Results feed for the <a href=\"https://foia-around-find-out.pages.dev/\" target=\"_blank\" rel=\"noopener\">federal</a> and <a href=\"https://fafo-utah-kirk.pages.dev/\" target=\"_blank\" rel=\"noopener\">Charlie Kirk</a> public-records dockets, where anyone can file these requests. Headlines updated by hand as answers arrive. Client-side only, no tracking. CC0.";
