@@ -189,7 +189,19 @@ const RESULTS = [
     mean:"FOIA-2026-04063 (filed Jul 16) asked about the USMS's and FBI's use of Flock Safety's automated license-plate-reader network — a program question, not a request about any person. OIP's final response answers the request it wasn't sent: senior leadership offices don't “maintain records on individuals,” so no search, direct your letter elsewhere. The named components most likely to hold the records — FBI and USMS — are OIP's own suggestion, on paper.",
     src:"DOJ Office of Information Policy", date:"2026-07-21", next:"90-day appeal window — due Oct 19, 2026. Re-aim at FBI and USMS directly.",
     docket:"https://foia-around-find-out.pages.dev/",
-    clip:{ ag:"U.S. Department of Justice · Office of Information Policy", q:"Neither this Office nor any of these senior leadership offices of the Department typically maintains records on individuals and, as such, would not maintain the type of records you are seeking.", id:"Jul 21, 2026 · FOIA-2026-04063 · for Andrew D. Fiorillo, Chief, Initial Request Staff" } }
+    clip:{ ag:"U.S. Department of Justice · Office of Information Policy", q:"Neither this Office nor any of these senior leadership offices of the Department typically maintains records on individuals and, as such, would not maintain the type of records you are seeking.", id:"Jul 21, 2026 · FOIA-2026-04063 · for Andrew D. Fiorillo, Chief, Initial Request Staff" } },
+  { kind:"no-records", thread:"Surrender video",
+    hl:"The video of Robinson's surrender no longer exists — never exported, deleted within a month of recording.",
+    mean:"WCSO's written answer to the July 9 request: there is no lobby or hallway video of the Patrol Building from the night Robinson turned himself in — it was never clipped or exported, so it auto-deleted 14–30 days after recording, and no record documents the deletion. The “Tyler Robinson and Video” email thread survives, but the fee waiver was denied: the lowest-paid-capable-employee hourly rate after a free first 15 minutes, over 4 hours of redaction anticipated, total to exceed $25. Notably, the pre-announced redactions are PII-only — home addresses (§ 63G-2-305(51)) and personal emails (§ 63G-2-302(2)(d)) — not the § 63G-2-305(10) active-case wall every other Utah agency has raised.",
+    src:"Washington County Sheriff's Office", date:"2026-07-22", next:"Told records to proceed — exact cost promised by Jul 30, completion anticipated Jul 30. If the fee comes back inflated: appeal to Sheriff Barry Golding as CAO, 30 days.",
+    docket:"https://fafo-utah-kirk.pages.dev/",
+    clip:{ ag:"Washington County Sheriff's Office · Records", q:"There is no video of the lobby or hallways of the Patrol Building when Robinson turned himself in. The video was not clipped and exported, therefore it was deleted between 14-30 days after it was recorded.", id:"Jul 22, 2026 · fee waiver denied · Sherrie Maxwell, Records Officer" } },
+  { kind:"denied", thread:"Booking records",
+    hl:"Utah County closed the booking-records request outright — protected until the criminal case ends.",
+    mean:"Request #26-2775 sought Robinson's booking records. The closure notice denies them wholesale under § 63G-2-305(10)(a), (b) and (c) — the same active-case classification Orem and the County Attorney have deployed — and invites a re-file “once the criminal case is resolved.”",
+    src:"Utah County Sheriff's Office", date:"2026-07-23", next:"30-day appeal window — Utah County Administrator (recordsappeals@utahcounty.gov).",
+    docket:"https://fafo-utah-kirk.pages.dev/",
+    clip:{ ag:"Utah County, UT · public records (NextRequest)", q:"Your request for booking records pertaining to Tyler James Robinson is denied as this case is currently under investigation and classified as protected under Utah Code § 63G-2-305(10)(a)(b) and (c).", id:"Jul 23, 2026 · #26-2775 · closed" } }
 ];
 
 // ——— pending countdown ———
@@ -201,15 +213,15 @@ const PENDING = [
   { what:"TPUSA event coordination, credentialing & vendor roster", ag:"UVU · #26-221", due:"2026-07-31", stat:"Filed Jul 16" },
   { what:"The $615 motive-briefing memos — override resent to CAO Pierpont, routing fixed, Duncan cc’d", ag:"Utah Governor’s Office · 260716AB2", due:null, stat:"Resent Jul 21 · decision pending" },
   { what:"The $351 paved-scene records — override resent to CAO Pierpont, same fix", ag:"Utah Governor’s Office · 260716AB1", due:null, stat:"Resent Jul 21 · decision pending" },
-  { what:"Appeal of the OIP “Epstein files” recharacterization (FOIA-2026-04080)", ag:"DOJ OIP · Appeal A-2026-01951", due:"2026-08-18", stat:"Filed via FOIA STAR Jul 21" },
-  { what:"Appeal of the ATF 7(A) blanket denial of the DNA-lab records (2026-01995)", ag:"DOJ OIP · Appeal A-2026-01952", due:"2026-08-18", stat:"Filed via FOIA STAR Jul 21" },
-  { what:"RCRA violation notice for the Crane, Indiana ammunition complex", ag:"EPA · 2026-EPA-06621", due:"2026-08-18", stat:"Filed Jul 21 via FOIA.gov (conf. 3042521) · case number assigned same day" },
+  { what:"Appeal of the OIP “Epstein files” recharacterization (FOIA-2026-04080)", ag:"DOJ OIP · Appeal A-2026-01951", due:"2026-08-18", stat:"Ack'd Jul 22 · expedite ruled unperfected, § 1746 certification refiled same day" },
+  { what:"Appeal of the ATF 7(A) blanket denial of the DNA-lab records (2026-01995)", ag:"DOJ OIP · Appeal A-2026-01952", due:"2026-08-18", stat:"Ack'd Jul 22 · expedite ruled unperfected, § 1746 certification refiled same day" },
+  { what:"RCRA violation notice for the Crane, Indiana ammunition complex", ag:"EPA · 2026-EPA-06621", due:"2026-08-18", stat:"Filed Jul 21 (conf. 3042521) · ack'd, routed to Region 5 FOIA Program" },
   { what:"J&A / sole-source justification + requirements doc — NSWC Crane “demolition charge, AP, extra small mini” contract (Accurate Energetic Systems)", ag:"NAVSEA FOIA · by email", due:"2026-08-18", stat:"Filed Jul 21 · no ack yet" },
   { what:"DD Form 250 acceptance + post-October 2025 modifications, same Crane contract", ag:"NAVSEA FOIA · by email", due:"2026-08-18", stat:"Filed Jul 21 · no ack yet" },
   { what:"Rooftop officer’s bodycam + device audit log (power/battery events) + BWC policy — round two, expanded", ag:"UVU Police Dept · by email", due:"2026-08-05", stat:"Filed Jul 21 · expedite requested" },
   { what:"GRAMA appeal of the Orem K9 denial — CAO determination on the 305(10) “Active Case” classification", ag:"City of Orem · City Manager Brenn Bybee", due:"2026-08-05", stat:"Appeal filed Jul 21 evening · § 63G-2-401(5) clock" },
   { what:"The Nest-doorbell homeowner interview report", ag:"FBI · eFOIPA", due:null, stat:"Filed Jul 16 · number pending" },
-  { what:"Unedited 24-hour Epstein facility video (source of the July 7 memo's footage)", ag:"FBI · eFOIPA", due:null, stat:"Filed Jul 17 · number pending" },
+  { what:"Unedited 24-hour Epstein facility video (source of the July 7 memo's footage)", ag:"FBI · FOIPA 1747564-000", due:"2026-08-20", stat:"Assigned Jul 23 · expedite denied · fee waiver under consideration" },
   { what:"WaPo journalist home-raid warrant package + return", ag:"FBI · eFOIPA", due:null, stat:"Filed Jul 18 · number pending" },
   { what:"Exhibit 12.1/12.4 tasking records, Panguitch tip log, Discord evidence intake, ballistics + GSR reports, latent prints 11B–11D", ag:"Utah DPS / UHP · P012986/87/89/92/95", due:"2026-07-31", stat:"Filed Jul 16 · 10-day clock" },
   { what:"McBride Fifth-Amendment letter + the Mike Mitchell interview report", ag:"Washington County SO", due:"2026-07-31", stat:"Filed Jul 16 · numbers pending" },
@@ -220,7 +232,16 @@ const PENDING = [
   { what:"DFC investment commitments (Honduras / Próspera-adjacent)", ag:"U.S. Int’l Development Finance Corp · 26-039", due:null, stat:"Amended Jul 10 · acknowledged Jul 14 · complex queue" },
   { what:"PostHog analytics contracts on federal sites", ag:"OMB · no ack yet", due:"2026-08-03", stat:"Determination due" },
   { what:"Authorization for NDS “AutoMonitor” tracking scripts", ag:"OMB · no ack yet", due:"2026-08-03", stat:"Determination due" },
-  { what:"PIAs/SORNs in OMB’s own files — the custody-proof re-aim", ag:"OMB · FOIA 2026-745", due:null, stat:"Logged Jul 16" }
+  { what:"PIAs/SORNs in OMB’s own files — the custody-proof re-aim", ag:"OMB · FOIA 2026-745", due:null, stat:"Logged Jul 16" },
+  { what:"The unfired round on the roof — Agent Schneider's report, the evidence-log entry (or the decision not to log it), and the rifle-cycling officer; rooftop/overwatch post assignments by building and agency", ag:"Utah DPS / UHP · P013306/07-072126", due:"2026-08-05", stat:"Filed Jul 21 · acknowledged · 10-day clock, Pioneer Day skipped" },
+  { what:"“Tyler Robinson and Video” email thread — proceed sent, PII-only redactions under way, exact cost promised by Jul 30", ag:"Washington County SO", due:"2026-07-30", stat:"Fee waiver denied Jul 22 · completion anticipated Jul 30" },
+  { what:"The nine-request OIP batch — memo, interview transcripts, processing index/log, binder contents, case-file materials, policy memos, the maintained list", ag:"DOJ OIP · 26-04058/59/60/61/62/64/65/66/81", due:null, stat:"Ack'd Jul 23 · all-categories search-scope notice filed same day" },
+  { what:"FARA registrations, letters of inquiry, or registration determinations for Shabtai and Friends of the IDF", ag:"DOJ OIP · FOIA-2026-04169", due:"2026-08-21", stat:"Filed Jul 24 via FOIA STAR · expedite + fee waiver requested" },
+  { what:"DOJ communications to Congress asserting deliberative-process privilege over Epstein / EFTA records, with the supporting legal memos", ag:"DOJ OIP · FOIA-2026-04170", due:"2026-08-21", stat:"Filed Jul 24 via FOIA STAR · expedite + fee waiver requested" },
+  { what:"Elbridge Colby's OGE 278e financial disclosures + ethics agreements, recusals, conflict determinations", ag:"OSD/JS · 26-F-2781", due:"2026-08-21", stat:"Filed Jul 24 via FOIA.gov (conf. 3050021) · case number assigned same day" },
+  { what:"Greg Hogan's NDS→login.gov detail paperwork — detail agreement, assignment memo, IPA/reimbursable-detail records", ag:"GSA · FOIA.gov conf. 3051626", due:"2026-08-21", stat:"Filed Jul 25 · GSA ack 2026-FOI-02035 covers one of this pair — second ack will say which" },
+  { what:"login.gov expansion to U.S. passports and state driver's licenses — project charter, SOW, requirements doc, interagency agreements", ag:"GSA · FOIA.gov conf. 3051631", due:"2026-08-21", stat:"Filed Jul 25 · GSA ack 2026-FOI-02035 covers one of this pair — second ack will say which" },
+  { what:"DFC commitments concerning Honduras / La Ceiba — Jilamito hydropower (IDB Invest), Próspera ZEDE affiliates, Ficohsa & Lafise Honduras, CEO Black's Tegucigalpa trip records", ag:"U.S. Int’l Development Finance Corp · by email", due:"2026-08-21", stat:"Refined request sent Jul 25 · scope per DFC's Jul 14 construction · expedite + fee waiver requested" }
 ];
 
 const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
