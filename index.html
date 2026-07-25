@@ -65,6 +65,15 @@
   .clip.money .q b{font-size:20px;font-weight:700;display:block;margin-top:2px;letter-spacing:-.01em}
   .clip .id{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:10px}
 
+  /* the edge map — each row is one kind of boundary the blob has shown */
+  .edges{margin:12px 0 0}
+  .edgerow{display:grid;grid-template-columns:172px 1fr 40px;gap:0 18px;align-items:baseline;padding:12px 0;border-top:1px solid var(--line);font-size:14px}
+  .edgerow .elabel{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink)}
+  .edgerow .eblurb{color:var(--ink2);font-size:13.5px;line-height:1.5}
+  .edgerow .etraced{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--faint);margin-top:5px}
+  .edgerow .ecount{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--ink2);text-align:right}
+  @media (max-width:620px){ .edgerow{grid-template-columns:1fr 40px} .edgerow .eblurb{grid-column:1 / -1} }
+
   /* on the clock */
   .pending{margin:12px 0 0}
   .prow{display:grid;grid-template-columns:74px 1fr 200px;gap:0 18px;align-items:center;padding:13px 0;border-top:1px solid var(--line);font-size:13.5px}
@@ -99,6 +108,10 @@
 
   <div class="note"><b>“No Records”</b> replies confirm that a document which <span class="em">should</span> exist <span class="em">doesn’t</span>.</div>
 
+  <h2 class="sec"><span>The edges</span><span id="edgeLede"></span></h2>
+  <div class="note" style="margin:14px 0 4px;border-left-color:var(--line)">Every answer that isn't records-in-hand traces an edge of the blob — where records aren't kept, can't be reached, or won't be shown. Mapped as they're found.</div>
+  <div class="edges" id="edges"></div>
+
   <h2 class="sec"><span>Results</span><span class="legend">
     <span><i style="background:var(--norec)"></i>no records</span>
     <span><i style="background:var(--rec)"></i>records released</span>
@@ -117,86 +130,93 @@
 // ——— curated results feed (edit as answers land) ———
 // kind: "no-records" | "records" | "denied" | "invoiced"
 // clip = a verbatim scrap of the actual reply: {ag, q, id, money?}
+// edge: which boundary the answer traced —
+//   "no-paper"    the record that should exist doesn't
+//   "custody"     real records held where FOIA can't reach
+//   "active-case" sealed behind an open investigation (305(10) / b(7)(A))
+//   "fee"         access priced instead of denied
+//   "swerve"      the agency answered a request that wasn't sent
+//   "slow-lane"   expedite denied — the answer isn't no, it's later
 const RESULTS = [
-  { kind:"no-records", thread:"National Design Studio",
+  { kind:"no-records", edge:"no-paper", thread:"National Design Studio",
     hl:"The National Design Studio has filed no records schedule with the National Archives.",
     mean:"Every federal body must file one so its records can’t quietly vanish. NDS operates without one — now confirmed in writing (NGC26-543).",
     src:"National Archives", date:"2026-07-09", next:"90-day appeal window open.",
     docket:"https://foia-around-find-out.pages.dev/#card-passports-eop",
     clip:{ ag:"National Archives and Records Administration", q:"Following a search, no records were found to be responsive.", id:"Jul 9, 2026 · NGC26-543" } },
-  { kind:"no-records", thread:"National Design Studio",
+  { kind:"no-records", edge:"no-paper", thread:"National Design Studio",
     hl:"No agreement exists between the Election Assistance Commission and NDS over vote.gov.",
     mean:"The EAC publicly admitted redesign talks with the design studio happened — yet holds no contract, MOU, or task order for it. The gap between “talks happened” and “no paper” is the story.",
     src:"Election Assistance Commission", date:"2026-07-09", next:"90-day appeal window open.",
     docket:"https://foia-around-find-out.pages.dev/#card-vote-gov-preview",
     clip:{ ag:"U.S. Election Assistance Commission", q:"The EAC does not possess records responsive to your request.", id:"Jul 9, 2026 · EAC 26-0064" } },
-  { kind:"denied", thread:"National Design Studio",
+  { kind:"denied", edge:"custody", thread:"National Design Studio",
     hl:"OMB won’t process requests about NDS — the studio sits inside the White House Office, where FOIA can’t reach.",
     mean:"NDS was created inside the White House Office itself (Executive Order 14338, Aug 2025). OMB’s written answer puts the shield on paper: NDS records aren’t in its custody and it won’t process FOIA for the studio. But § 208 privacy assessments are submitted TO OMB — the re-aimed request at OMB’s own files is one the custody argument can’t deflect.",
     src:"Office of Management and Budget", date:"2026-07-16", next:"Re-aim at OMB’s own files logged as OMB FOIA 2026-745.",
     docket:"https://foia-around-find-out.pages.dev/#card-no-pias-sorns",
     clip:{ ag:"Office of Management and Budget", q:"OMB does not process FOIA requests on behalf of NDS.", id:"Jul 16, 2026 · custody deflection" } },
-  { kind:"no-records", thread:"National Design Studio",
+  { kind:"no-records", edge:"no-paper", thread:"National Design Studio",
     hl:"No one authorized a White House design-studio staffer to be the security contact on a federal agency’s website.",
     mean:"An @ndstudio.gov address sat as the security contact on the U.S. African Development Foundation’s own domain — with zero written authorization behind it.",
     src:"U.S. African Development Foundation", date:"2026-07-13", next:"Clean confirmed absence — no follow-up needed.",
     docket:"https://foia-around-find-out.pages.dev/#card-akash-usadf",
     clip:{ ag:"U.S. African Development Foundation", q:"There are no documents responsive to your request.", id:"Jul 13, 2026 · no charge" } },
-  { kind:"no-records", thread:"Conflict of interest",
+  { kind:"no-records", edge:"no-paper", thread:"Conflict of interest",
     hl:"No financial-disclosure or ethics record for Joe Gebbia exists at the Office of Government Ethics.",
     mean:"The design-studio figurehead has no certified disclosure on file at the federal ethics office. Such reports also sit outside FOIA entirely — a second layer of opacity.",
     src:"Office of Government Ethics", date:"2026-07-07", next:"OGE Form 201 to the White House Office ethics official — a § 13107 route FOIA shields can’t block.",
     docket:"https://foia-around-find-out.pages.dev/#card-gebbia-coi",
     clip:{ ag:"U.S. Office of Government Ethics", q:"OGE searched and located no responsive records — and 278e reports aren’t processed under FOIA at all.", id:"Jul 7, 2026 · OGE FOIA FY 26/080" } },
-  { kind:"invoiced", thread:"Motive without a witness",
+  { kind:"invoiced", edge:"fee", thread:"Motive without a witness",
     hl:"Utah’s Governor wants $615 before it will release the memos behind Gov. Cox’s motive claims.",
     mean:"Fee waiver and fast-track both denied. Nine “staff hours” at $60 plus a $75 out-of-state surcharge — the price to see who briefed the Governor before he named a homicide suspect’s motive to the country.",
     src:"Office of the Governor of Utah", date:"2026-07-17", next:"Override resent to CAO Pierpont Jul 21 (routing fixed, Duncan cc'd) — awaiting decision. Not paying.",
     docket:"https://fafo-utah-kirk.pages.dev/#card-motive-testimony",
     clip:{ ag:"Office of the Governor of Utah · Invoice GO-071726-0088", q:"9.0 hrs staff time + $75 out-of-state fee.<b>Total: $615.00</b>", id:"Jul 17, 2026 · due Aug 3", money:true } },
-  { kind:"invoiced", thread:"Scene paved over",
+  { kind:"invoiced", edge:"fee", thread:"Scene paved over",
     hl:"Utah’s Governor wants $351 before it will release records on the paving-over of the crime scene.",
     mean:"Same denial. The lead detective testified he never authorized paving the homicide scene mid-investigation; a contractor points at the Governor’s office — and the office wants prepayment to say whether records exist.",
     src:"Office of the Governor of Utah", date:"2026-07-17", next:"Override resent to CAO Pierpont Jul 21 — awaiting decision.",
     docket:"https://fafo-utah-kirk.pages.dev/#card-paved-scene",
     clip:{ ag:"Office of the Governor of Utah · Invoice GO-071726-0087", q:"4.6 hrs staff time + $75 out-of-state fee.<b>Total: $351.00</b>", id:"Jul 17, 2026 · due Aug 3", money:true } },
-  { kind:"denied", thread:"UVU hearing evidence",
+  { kind:"denied", edge:"slow-lane", thread:"UVU hearing evidence",
     hl:"Utah Valley University refused to fast-track all five requests for the hearing evidence.",
     mean:"The source of the “4K” roof exhibit, the cut courtroom clips, and the scene access log with the agency roster — expedite denied on each, on the same public-benefit finding (§ 63G-2-204(4)(a)). The identical denial issued a day earlier on the first-round pair: #26-214 (access log + roster) and #26-215 (the rooftop officer's bodycam and its device audit log). The requests still stand; answers are legally due.",
     src:"UVU Police Department", date:"2026-07-17", next:"Substantive responses due Jul 27 (26-214/215) and ~Aug 1 (26-229/230/231).",
     docket:"https://fafo-utah-kirk.pages.dev/#card-exhibit-121",
     clip:{ ag:"Utah Valley University · records office", q:"The request “failed to meet that burden” of demonstrating a public benefit.", id:"Jul 16–17, 2026 · #26-214/215 · #26-229/230/231" } },
-  { kind:"denied", thread:"DNA consumed in testing",
+  { kind:"denied", edge:"active-case", thread:"DNA consumed in testing",
     hl:"ATF denied the DNA-lab records request in full — open investigation, Exemption 7(A).",
     mean:"Request 2026-01995 sought the three DNA reports behind the state's case, the permission-to-consume authorization for the nine samples used up with nothing saved for the defense, and the elimination-sample records. The July 20 PAL “delivery” turned out to be the determination letter itself: a full denial under 5 U.S.C. § 552(b)(7)(A) while the investigation stays open — the anticipated 7(A) wall, now fixed on paper. Signed Hirsh D. Kravitz, Chief, Information and Privacy Governance Division; FOIA Public Liaisons Lynette Carter and Jasmine Bryant (202-648-7390).",
     src:"Bureau of Alcohol, Tobacco, Firearms and Explosives", date:"2026-07-20", next:"Appeal A-2026-01952 filed via FOIA STAR Jul 21 — OIP response due Aug 18, 2026.",
     docket:"https://fafo-utah-kirk.pages.dev/#card-atf-dna-consumed",
     clip:{ ag:"ATF · Information and Privacy Governance Division", q:"At this time, the investigation relating to your request is still open. Therefore, your request is denied pursuant to 5 U.S.C. section 552(b)(7)(A) because it concerns an ongoing investigation.", id:"Jul 20, 2026 · ATF 2026-01995 · Hirsh D. Kravitz" } },
-  { kind:"denied", thread:"Epstein redactions",
+  { kind:"denied", edge:"swerve", thread:"Epstein redactions",
     hl:"DOJ answered the bin Sulayem redaction request as if it asked for “the Epstein files,” and pointed at the public library.",
     mean:"FOIA-2026-04080 asked for one narrow thing: the correspondence where DOJ redacted Sultan Ahmed bin Sulayem's name, and the withholding determination behind it — a redaction whose stated basis collapsed when the Deputy AG confirmed the identity on the record. OIP's final response recharacterizes the request as one for the Epstein/Maxwell files generally, cites exemptions (b)(3) (CSAM statutes), (b)(5), (b)(6), (b)(7)(A), (b)(7)(C) plus an SDNY court seal, and points to the EFTA online library. The records actually requested are never addressed.",
     src:"DOJ Office of Information Policy", date:"2026-07-21", next:"Appeal A-2026-01951 filed via FOIA STAR Jul 21 — OIP response due Aug 18, 2026.",
     docket:"https://foia-around-find-out.pages.dev/#card-bin-sulayem-doj-redaction",
     clip:{ ag:"U.S. Department of Justice · Office of Information Policy", q:"This responds to your Freedom of Information Act (FOIA) request for the Jeffrey Epstein and/or Ghislaine Maxwell files.", id:"Jul 21, 2026 · FOIA-2026-04080 · for Andrew D. Fiorillo, Chief, Initial Request Staff" } },
-  { kind:"denied", thread:"K9 that found nothing",
+  { kind:"denied", edge:"active-case", thread:"K9 that found nothing",
     hl:"Orem PD denied even the question of whether a K9 was deployed — twice in one day.",
     mean:"The July 16 request asked only whether a City of Orem canine unit was deployed to the UVU response and for its handler logs. Orem answered the morning of Jul 21 with a formal denial — the Utah County Attorney's Office asked that the records be classified Protected under § 63G-2-305(10) — and when the request was cured and resent that afternoon, re-denied it within the hour with the same letter. The denial form lists the record as “K9 inquiry” and the ground as “Active Case”; all further questions are pointed at the Utah State Bureau of Investigation.",
     src:"Orem Police Department", date:"2026-07-21", next:"Appeal filed with City Manager Brenn Bybee the same evening — determination due ~Aug 5 (§ 63G-2-401(5)).",
     docket:"https://fafo-utah-kirk.pages.dev/",
     clip:{ ag:"City of Orem · Records (Angela Campbell)", q:"The City is compelled to classify these records as Protected pursuant to Utah Code § 63G-2-305(10)… As such, your request is formally denied.", id:"Jul 21, 2026 · denial form: “K9 inquiry — Active Case”" } },
-  { kind:"denied", thread:"Flock license-plate readers",
+  { kind:"denied", edge:"swerve", thread:"Flock license-plate readers",
     hl:"DOJ OIP closed the Flock ALPR request with a form letter about “records on individuals” — no search, go ask the FBI and USMS.",
     mean:"FOIA-2026-04063 (filed Jul 16) asked about the USMS's and FBI's use of Flock Safety's automated license-plate-reader network — a program question, not a request about any person. OIP's final response answers the request it wasn't sent: senior leadership offices don't “maintain records on individuals,” so no search, direct your letter elsewhere. The named components most likely to hold the records — FBI and USMS — are OIP's own suggestion, on paper.",
     src:"DOJ Office of Information Policy", date:"2026-07-21", next:"90-day appeal window — due Oct 19, 2026. Re-aim at FBI and USMS directly.",
     docket:"https://foia-around-find-out.pages.dev/",
     clip:{ ag:"U.S. Department of Justice · Office of Information Policy", q:"Neither this Office nor any of these senior leadership offices of the Department typically maintains records on individuals and, as such, would not maintain the type of records you are seeking.", id:"Jul 21, 2026 · FOIA-2026-04063 · for Andrew D. Fiorillo, Chief, Initial Request Staff" } },
-  { kind:"no-records", thread:"Surrender video",
+  { kind:"no-records", edge:"no-paper", thread:"Surrender video",
     hl:"The video of Robinson's surrender no longer exists — never exported, deleted within a month of recording.",
     mean:"WCSO's written answer to the July 9 request: there is no lobby or hallway video of the Patrol Building from the night Robinson turned himself in — it was never clipped or exported, so it auto-deleted 14–30 days after recording, and no record documents the deletion. The “Tyler Robinson and Video” email thread survives, but the fee waiver was denied: the lowest-paid-capable-employee hourly rate after a free first 15 minutes, over 4 hours of redaction anticipated, total to exceed $25. Notably, the pre-announced redactions are PII-only — home addresses (§ 63G-2-305(51)) and personal emails (§ 63G-2-302(2)(d)) — not the § 63G-2-305(10) active-case wall every other Utah agency has raised.",
     src:"Washington County Sheriff's Office", date:"2026-07-22", next:"Proceed sent Jul 25, in-thread, with a preservation ask covering the processing file and all records on the video's deletion, retention settings, and related inquiries — exact cost promised by Jul 30, completion anticipated Jul 30. If the fee comes back inflated: appeal to Sheriff Barry Golding as CAO, 30 days.",
     docket:"https://fafo-utah-kirk.pages.dev/",
     clip:{ ag:"Washington County Sheriff's Office · Records", q:"There is no video of the lobby or hallways of the Patrol Building when Robinson turned himself in. The video was not clipped and exported, therefore it was deleted between 14-30 days after it was recorded.", id:"Jul 22, 2026 · fee waiver denied · Sherrie Maxwell, Records Officer" } },
-  { kind:"denied", thread:"Booking records",
+  { kind:"denied", edge:"active-case", thread:"Booking records",
     hl:"Utah County closed the booking-records request outright — protected until the criminal case ends.",
     mean:"Request #26-2775 sought Robinson's booking records. The closure notice denies them wholesale under § 63G-2-305(10)(a), (b) and (c) — the same active-case classification Orem and the County Attorney have deployed — and invites a re-file “once the criminal case is resolved.”",
     src:"Utah County Sheriff's Office", date:"2026-07-23", next:"30-day appeal window — Utah County Administrator (recordsappeals@utahcounty.gov).",
@@ -248,6 +268,16 @@ const PENDING = [
 
 const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const TAG = { "no-records":"No records", "records":"Records released", "denied":"Denied", "invoiced":"Invoiced" };
+
+// ——— the edge map — one row per kind of boundary, built from the tagged results ———
+const EDGES = {
+  "no-paper":    { label:"The paper doesn't exist",  blurb:"Records that should exist and don't — no schedule, no authorization, no deletion log. The absence is the finding." },
+  "custody":     { label:"Out of reach",             blurb:"Real records, held where FOIA can't touch them — the White House Office shield, “not our records, ask elsewhere.”" },
+  "active-case": { label:"The active-case wall",     blurb:"§ 63G-2-305(10) and (b)(7)(A) — everything sealed behind an open investigation, no segregability, no end date." },
+  "fee":         { label:"The fee wall",             blurb:"Access priced instead of denied — waivers refused, staff-hours invoiced, prepayment demanded before existence is confirmed." },
+  "swerve":      { label:"The swerve",               blurb:"The agency answers a request that wasn't sent — scope recharacterized, no search run, pointed at the public library." },
+  "slow-lane":   { label:"The slow lane",            blurb:"Expedite denied on a public-benefit finding — the answer isn't no, it's later, while the clock does its work." }
+};
 const MONTH = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmt = iso => { const [y,m,d]=iso.split("-").map(Number); return MONTH[m-1]+" "+d+", "+y; };
 // clip quote may contain a <b> total; escape around it deliberately
@@ -264,11 +294,28 @@ document.getElementById("results").innerHTML = RESULTS.map(s => {
       `<span class="tag">${TAG[s.kind]}</span><span class="thread">${esc(s.thread)}</span>`+
       `<div class="hl">${esc(s.hl)}</div>`+
       `<div class="foot"><span>${esc(s.src)}</span><span>${fmt(s.date)}</span>`+
+      (s.edge&&EDGES[s.edge]?`<span>edge: ${esc(EDGES[s.edge].label.toLowerCase())}</span>`:"")+
       (s.next?`<span class="next">Next: ${esc(s.next)}</span>`:"")+
       `<a href="${esc(s.docket)}" target="_blank" rel="noopener">the request ↗</a></div>`+
     `</div>`+ clip +
   `</div>`;
 }).join("");
+
+// group tagged results into the edge rows (only edges actually traced appear)
+const edgeGroups = Object.keys(EDGES).map(k => {
+  const hits = RESULTS.filter(r => r.edge === k);
+  return { k, ...EDGES[k], hits };
+}).filter(g => g.hits.length);
+document.getElementById("edges").innerHTML = edgeGroups.map(g =>
+  `<div class="edgerow">`+
+    `<div class="elabel">${esc(g.label)}</div>`+
+    `<div class="eblurb">${esc(g.blurb)}`+
+      `<span class="etraced">traced by: ${g.hits.map(h => esc(h.thread)).join(" · ")}</span>`+
+    `</div>`+
+    `<div class="ecount">${g.hits.length}</div>`+
+  `</div>`).join("");
+document.getElementById("edgeLede").textContent =
+  edgeGroups.length + " edges traced by " + edgeGroups.reduce((n,g)=>n+g.hits.length,0) + " answers";
 
 function daysLeft(due){
   if(!due) return null;
